@@ -1,0 +1,70 @@
+1. diagram.io simple bank
+- https://dbdiagram.io/d/Simple-Bank-67232c0eb1b39dd8580aaa5e
+- Simple Bank.sql itu hasil export postgresql script diagram dari dbdiagram.io 
+
+2. wsl
+sudo apt update
+sudo apt install make
+sudo snap install go --classic
+sudo snap isntall sqlc
+
+make itu untuk pake MakeFile
+sqlc:
+    untuk melakukan function db di go itu ada beberapa cara
+    pake library asli (database/sql), GORM, SQLX, dan SQLC
+    downside:
+        - lib asli -> memang cepet tapi mapping manual
+        - gorm -> mapping otomatis dan enak tapi kalo query yang berat bisa lemot
+        - SQLX -> cepet, mapping by struct, tapi errornya juga ketauan pas runtime
+        - SQLC -> gabungan pros dari semua diatas tapi kurangnya baru support postgresql doang
+
+3. install docker desktop
+- setelah installernya terdownload kita buka powershell as admin masuk ke directory download (c:\Users\HP\Downloads)
+- jalanin command:
+    Start-Process "Docker Desktop Installer.exe" -Verb RunAs -Wait -ArgumentList "install --installation-dir=C:\Docker\"
+    diginiin biar dia kagak bikin error go yang terinstall di wsl
+- setelah udah terinstall, masuk ke settings docker desktop checklist Use the WSL 2 based engine dan add the *.docker.internal name
+
+4. docker basic command
+(JADINYA CONTAINERNYA PAKE YANG postgres12-test. catetan di bawah ini pake postgres12 karena emang sebelumnya pake itu)
+- pull image postgresql alpine (lebih kecil size)
+    docker pull postgres:12-alpine
+- jalanin container dari image
+    docker run --name <container_name> -p <localhostport>:<dockerport> -e <environment_variable> -d <image>:<tag>
+    docker run --name postgres12 -p 8080:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:12-alpine
+    kalo kita udah pernah install postgres di local jangan pake port 5432, karena udah direserve pasti, makanya mending kirinya pake 8080
+- jalanin interactive comand dari specified container
+    docker exec -it <container_name> <command>
+    docker exec -it postgres12 psql -U root // ini kagak perlu pake password karena kalo localhost si imagenya trust
+    quit consolenya \q
+- view logs dari container
+    docker logs <container_name_or_id>
+- stop container
+    docker stop <container_name_or_id>
+    docker stop postgres12
+- start container yang sebelumnya udah di run
+    docker start <container_name_or_id>
+    docker start postgres12
+- remove docker container
+    docker rm <container_name_or_id>
+
+
+5. table plus. mirip kek dbeaver tapi kagak tau kenapa kagak bisa disambungin
+
+6. golang migrate
+sedang dicoba lagi install migrate di wsl ubuntu (https://stackoverflow.com/questions/66621682/unable-to-install-golang-migrate-library-on-ubuntu-20-4)
+
+https://www.freecodecamp.org/news/database-migration-golang-migrate/
+- init migration folder dan file 
+    migrate create -ext sql -dir db/migration -seq init_schema
+
+7. SQLC
+sqlc version
+https://docs.sqlc.dev/en/latest/tutorials/getting-started-postgresql.html
+
+- sqlc init dulu buat generate sqlc.yamlnya
+- setup dulu sqlc yamlnya sesuai kebutuhan
+- bikin folder di db namanya sqlc dan query
+    query untuk pure query db kita (saat buat query ini di atasnya ada tagnya itu penting ya. one return 1 data, many return banyak, exec kagak return apa2 )
+    sqlc itu buat hasil / mappingan ke codes kita. jadi gak ubah2 codes disini karena ini file generatan
+- kalo udah buat querynya tinggal jalanin sqlc generate
