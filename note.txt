@@ -68,3 +68,11 @@ https://docs.sqlc.dev/en/latest/tutorials/getting-started-postgresql.html
     query untuk pure query db kita (saat buat query ini di atasnya ada tagnya itu penting ya. one return 1 data, many return banyak, exec kagak return apa2 )
     sqlc itu buat hasil / mappingan ke codes kita. jadi gak ubah2 codes disini karena ini file generatan
 - kalo udah buat querynya tinggal jalanin sqlc generate
+
+8. Unit test
+- kita perlu buat dulu main entry file untuk semua testignnya (main_test.go)
+    - saat setup connection kita perlu install pq drivernya dulu pake go get github.com/lib/pq (kalo gak kena error ini cannot connect to db:sql: unknown driver "postgres")
+    - karena si library sql.Open itu cuma nyediain genericnya aja makanay tetep perlu get pq
+    - setelah itu importnya pake _ karena dia special import karena kita kagak pake function yang dia punya
+    - jalanin testnya liat di paling atas filenya ada tulisan run test gitu
+    - di make file ada script test -v untuk tampilin verbose, -cover tampilin coverage, ./... itu artinya jalanin semua testnya
